@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" lang="fr">
+<head>
+  <title>Pay My Buddy</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body>
+  <form th:action="@{/login}" method="post" class="m-auto w-70 border px-10 py-5 flex flex-col items-center font-semibold">
+    <h1 class="bg-amber-500 rounded-sm p-2 text-white mb-15">Pay My Buddy</h1>
+    <div th:if="${param.error}" class="text-red-600 bg-red-200 p-2">
+      Email ou mot de passe incorrect</div>
+    <div>
+      <input type="text" name="email" placeholder="Mail" class="border border-gray-300 rounded-sm text-gray-500 p-1 m-4"/>
+    </div>
+    <div>
+      <input type="password" name="password" placeholder="Mot de passe" class="border border-gray-300 rounded-sm text-gray-500 p-1 m-4"/>
+    </div>
+    <input type="submit" value="Se connecter" class="bg-blue-500 hover:bg-blue-700 rounded-sm p-2 text-white text-center m-8 cursor-pointer transition-all duration-100 ease-in-out"/>
+  </form>
+</body>
+</html>
