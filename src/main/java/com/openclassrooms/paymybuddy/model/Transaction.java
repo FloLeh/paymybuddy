@@ -10,19 +10,18 @@ public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, nullable = false)
-    private int id;
+    private Integer id;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "sender_id")
+    @ManyToOne
+    @JoinColumn
     private User sender;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "receiver_id")
+    @ManyToOne
+    @JoinColumn
     private User receiver;
 
     private String description;
 
-    private double amount;
+    private Double amount = 0.;
 
 }
