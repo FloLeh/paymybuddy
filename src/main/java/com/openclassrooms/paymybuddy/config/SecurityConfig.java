@@ -1,6 +1,6 @@
 package com.openclassrooms.paymybuddy.config;
 
-import com.openclassrooms.paymybuddy.service.CustomUserDetailsService;
+import com.openclassrooms.paymybuddy.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final CustomUserDetailsService customUserDetailsService;
+    private final UserService userService;
 
     private static final String[] PUBLIC_ROUTES = {
             "/login",
@@ -27,7 +27,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(customUserDetailsService);
+        provider.setUserDetailsService(userService);
         return provider;
     }
 

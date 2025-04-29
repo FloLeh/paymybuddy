@@ -4,6 +4,8 @@ import com.openclassrooms.paymybuddy.model.User;
 import com.openclassrooms.paymybuddy.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -15,19 +17,25 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    public User save(User user) throws Exception {
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user =  userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email = " + email));
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getEmail())
+                .password("{noop}" + user.getPassword())
+                .build();
+    }
+
+    public void save(User user) throws RuntimeException {
         Optional<User> existingEmail = userRepository.findByEmail(user.getEmail());
         if (existingEmail.isPresent()) {
-            throw new Exception("Email already exists");
+            throw new RuntimeException("Email already exists");
         }
         Optional<User> existingUsername = userRepository.findByUsername(user.getUsername());
         if (existingUsername.isPresent()) {
-            throw new Exception("Username already exists");
+            throw new RuntimeException("Username already exists");
         }
-        return userRepository.save(user);
-    }
-
-    public void delete(int userId) {
-        userRepository.deleteById(userId);
+        userRepository.save(user);
     }
 }
