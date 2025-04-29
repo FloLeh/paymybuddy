@@ -11,6 +11,11 @@ public class UserController {
         return "login";
     }
 
+    @GetMapping("/register")
+    public String registerPage() {
+        return "register";
+    }
+
     @GetMapping("/transfer")
     public String transferPage() {
         return "transfer";
