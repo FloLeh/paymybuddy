@@ -1,8 +1,7 @@
 package com.openclassrooms.paymybuddy.service;
 
-import com.openclassrooms.paymybuddy.model.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import com.openclassrooms.paymybuddy.model.UserEntity;
 
-public interface UserService extends UserDetailsService {
-     void save(User user) throws Exception;
+public interface UserService {
+     void save(UserEntity user) throws Exception;
 }

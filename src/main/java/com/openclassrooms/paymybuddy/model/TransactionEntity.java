@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "transactions")
-public class Transaction {
+public class TransactionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,11 +14,11 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn
-    private User sender;
+    private UserEntity sender;
 
     @ManyToOne
     @JoinColumn
-    private User receiver;
+    private UserEntity receiver;
 
     private String description;
 

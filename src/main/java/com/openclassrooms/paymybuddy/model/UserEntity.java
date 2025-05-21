@@ -1,14 +1,19 @@
 package com.openclassrooms.paymybuddy.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Entity
 @Table(name = "users")
-public class User {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,11 +28,20 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @ManyToMany
+    @Column
+    private Double account;
+
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "users_connections",
             joinColumns = @JoinColumn(name = "user1_id"),
             inverseJoinColumns = @JoinColumn(name = "user2_id")
     )
-    private List<User> connections;
+    private List<UserEntity> connections = new ArrayList<>();
+
+    public UserEntity(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
 }

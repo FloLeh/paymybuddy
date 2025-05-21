@@ -8,6 +8,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -27,7 +28,8 @@ public class UserControllerTest {
     @Test
     public void testLoginWithWrongCredentials() throws Exception {
         mockMvc.perform(formLogin("/login").user("user").password("wrong"))
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login?error=true"));
     }
 
     @Test

@@ -1,10 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Transfert</title>
+    <title>Pay my buddy</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body>
-    Transferer
+    <menu>
+        <h3>Pay my buddy</h3>
+        <ul>
+            <li><a href="/transfer">Transférer</a></li>
+            <li><a href="/profile">Profil</a></li>
+            <li><a href="/connections">Ajouter relation</a></li>
+            <li><a href="/logout">Se déconnecter</a></li>
+        </ul>
+    </menu>
+
+    <form th:action="@{/transfer}">
+        <select>
+            <option value="">Sélectionner une relation</option>
+            <option th:each="transaction : ${transactions}" th:value="${transaction.receiver.username}" th:text="${transaction.receiver.username}"></option>
+        </select>
+        <input type="text" name="description" placeholder="Description" />
+        <input type="number" name="amount" placeholder="0" />
+        <input type="submit" value="Payer" class="bg-blue-500 hover:bg-blue-700 rounded-sm py-2 px-3 text-white text-center m-8 cursor-pointer transition-all duration-100 ease-in-out"/>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Relations</th>
+                <th>Description</th>
+                <th>Montant</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="transaction : ${transactions}">
+                <td th:text="${transaction.receiver.username}"></td>
+                <td th:text="${transaction.description}"></td>
+                <td th:text="${transaction.amount}"></td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 </html>
