@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<body>
+<menu th:fragment="menu" class="flex justify-between font-medium">
+    <h3>Pay my buddy</h3>
+    <ul class="flex">
+        <li class="ml-10"><a href="/transfer" th:classappend="${active == 'transfer' ? 'text-blue-500 font-bold':''}">Transférer</a></li>
+        <li class="ml-10"><a href="/profile" th:classappend="${active == 'profile' ? 'text-blue-500 font-bold':''}">Profil</a></li>
+        <li class="ml-10"><a href="/connections" th:classappend="${active == 'connections' ? 'text-blue-500 font-bold':''}">Ajouter relation</a></li>
+        <li class="ml-10"><a href="/logout">Se déconnecter</a></li>
+    </ul>
+</menu>
+</body>
+
+</html>

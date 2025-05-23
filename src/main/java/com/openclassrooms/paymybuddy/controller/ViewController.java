@@ -29,6 +29,7 @@ public class ViewController {
     public String transferPage(Model model) {
         List<TransactionEntity> transactions = transactionService.getTransactions();
         model.addAttribute("transactions", transactions);
+        model.addAttribute("active", "transfer");
         return "transfer";
     }
 
