@@ -31,7 +31,7 @@ public class RegistrationController {
 
         try {
             UserEntity user = new UserEntity(registerUserRequest.username(), registerUserRequest.email(), registerUserRequest.password());
-            userService.save(user);
+            userService.createUser(user);
         } catch (Exception e) {
             log.error("Error saving user", e);
             model.addFlashAttribute("errors", List.of(e.getMessage()));

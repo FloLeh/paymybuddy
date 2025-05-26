@@ -5,8 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,7 +36,7 @@ public class UserEntity {
             joinColumns = @JoinColumn(name = "user1_id"),
             inverseJoinColumns = @JoinColumn(name = "user2_id")
     )
-    private List<UserEntity> connections = new ArrayList<>();
+    private Set<UserEntity> connections;
 
     public UserEntity(String username, String email, String password) {
         this.username = username;

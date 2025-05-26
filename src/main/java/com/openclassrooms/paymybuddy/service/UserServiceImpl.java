@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -17,7 +18,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public void save(UserEntity user) throws RuntimeException {
+    public void createUser(UserEntity user) throws RuntimeException {
         Optional<UserEntity> existingEmail = userRepository.findByEmail(user.getEmail());
         if (existingEmail.isPresent()) {
             throw new RuntimeException("Email already exists");
@@ -30,12 +31,34 @@ public class UserServiceImpl implements UserService {
 
         String encodedPassword = passwordEncoder.encode(user.getPassword());
 
-        log.info("Raw password {} - Encoded password: {}", user.getPassword(), encodedPassword);
-
         user.setPassword(encodedPassword);
 
         user = userRepository.save(user);
 
         log.info("Saved user: {}", user);
+    }
+
+    public UserEntity findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow( () -> new RuntimeException("Email not found"));
+    }
+
+    public String addConnection(String userEmail, String connectionEmail) {
+        UserEntity user = userRepository.findByEmail(userEmail).orElseThrow( () -> new RuntimeException("Email not found"));
+
+        Optional<UserEntity> connection = userRepository.findByEmail(connectionEmail);
+        if (connection.isEmpty()) {
+            return "notFound";
+        }
+
+        if (user.getConnections().contains(connection.get())) {
+            return "alreadyExists";
+        }
+
+        Set<UserEntity> connections = user.getConnections();
+        connections.add(connection.get());
+        user.setConnections(connections);
+        userRepository.save(user);
+
+        return "success";
     }
 }
