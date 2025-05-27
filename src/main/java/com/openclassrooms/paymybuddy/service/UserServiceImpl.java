@@ -33,13 +33,15 @@ public class UserServiceImpl implements UserService {
 
         user.setPassword(encodedPassword);
 
-        user = userRepository.save(user);
-
-        log.info("Saved user: {}", user);
+        userRepository.save(user);
     }
 
     public UserEntity findByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow( () -> new RuntimeException("Email not found"));
+    }
+
+    public UserEntity findById(Integer id) {
+        return userRepository.findById(id).orElseThrow( () -> new RuntimeException("User not found"));
     }
 
     public String addConnection(String userEmail, String connectionEmail) {

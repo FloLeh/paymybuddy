@@ -1,10 +1,26 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" lang="fr">
+<html xmlns:th="https://www.thymeleaf.org" lang="fr">
 <head>
     <title>Pay my buddy</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
-<body>
-Profil
+<body class="p-10">
+    <div th:insert="~{menu}"></div>
+
+    <form class="w-fit mx-auto my-30 flex flex-col leading-[2.5]">
+        <label>
+            <span class="font-medium mr-10">Username</span>
+<!--            <input type="text" th:value="${username}" />-->
+        </label>
+        <label>
+            <span class="font-medium mr-10">Mail</span>
+            <input type="email" th:value="${email}" />
+        </label>
+        <label>
+            <span class="font-medium mr-10">Mot de passe</span>
+            <input type="password" value="hello" />
+            <input type="submit" value="Modifier" class="self-center w-30 bg-amber-500 hover:bg-amber-600 rounded-sm py-3 px-5 text-white text-center leading-[1.5] cursor-pointer transition-all duration-100 ease-in-out"/>
+        </label>
+    </form>
 </body>
 </html>

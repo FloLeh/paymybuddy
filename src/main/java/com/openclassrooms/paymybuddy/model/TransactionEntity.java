@@ -1,10 +1,14 @@
 package com.openclassrooms.paymybuddy.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "transactions")
 public class TransactionEntity {
 

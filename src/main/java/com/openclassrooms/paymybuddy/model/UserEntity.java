@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -36,7 +37,7 @@ public class UserEntity {
             joinColumns = @JoinColumn(name = "user1_id"),
             inverseJoinColumns = @JoinColumn(name = "user2_id")
     )
-    private Set<UserEntity> connections;
+    private Set<UserEntity> connections = new HashSet<>();
 
     public UserEntity(String username, String email, String password) {
         this.username = username;
