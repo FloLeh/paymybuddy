@@ -11,9 +11,8 @@
         <label class="flex-3 mr-5 font-medium">
             <p>Chercher une relation</p>
             <input class="border-2 border-gray-300 rounded px-3 py-1 w-full placeholder:text-gray-500" type="text" name="email" placeholder="Saisir une adresse mail" />
-            <p class="text-red-500" th:if="${submitStatus == 'notFound'}">L'email renseigné n'existe pas.</p>
-            <p class="text-red-500" th:if="${submitStatus == 'alreadyExists'}">La relation existe déjà.</p>
-            <p class="text-green-500" th:if="${submitStatus == 'success'}">La relation a bien été ajoutée.</p>
+            <p class="text-red-500" th:if="${errorMessage != null && !errorMessage.isEmpty()}" th:text="${errorMessage}"></p>
+            <p class="text-green-500" th:if="${errorMessage != null && errorMessage.isEmpty()}">La relation a bien été ajoutée.</p>
         </label>
         <input type="submit" value="Ajouter" class="flex-1 self-center w-30 bg-amber-500 hover:bg-amber-600 rounded-sm py-3 px-5 text-white text-center leading-[1.5] cursor-pointer transition-all duration-100 ease-in-out"/>
     </form>

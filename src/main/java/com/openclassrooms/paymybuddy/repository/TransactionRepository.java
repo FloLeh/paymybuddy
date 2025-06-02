@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface TransactionRepository extends JpaRepository<TransactionEntity, Integer> {
     List<TransactionEntity> findBySender(UserEntity sender);
+
+    List<TransactionEntity> findByReceiver(UserEntity receiver);
 }

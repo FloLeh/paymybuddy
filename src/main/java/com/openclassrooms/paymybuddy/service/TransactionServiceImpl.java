@@ -1,5 +1,7 @@
 package com.openclassrooms.paymybuddy.service;
 
+import com.openclassrooms.paymybuddy.dto.TransactionCreateRequest;
+import com.openclassrooms.paymybuddy.dto.TransactionRelativeAmount;
 import com.openclassrooms.paymybuddy.model.TransactionEntity;
 import com.openclassrooms.paymybuddy.model.UserEntity;
 import com.openclassrooms.paymybuddy.repository.TransactionRepository;
@@ -8,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -15,12 +18,25 @@ import java.util.List;
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
+    private final UserService userService;
 
-    public List<TransactionEntity> getTransactionsByUser(UserEntity user) {
-        return transactionRepository.findBySender(user);
+    public List<TransactionRelativeAmount> getTransactionsWithRelativeAmount(UserEntity user) {
+        List<TransactionEntity> transactionsAsSender = transactionRepository.findBySender(user);
+        List<TransactionEntity> transactionsAsReceiver = transactionRepository.findByReceiver(user);
+        return Stream.concat(transactionsAsSender.stream(), transactionsAsReceiver.stream()).map(transactionEntity -> {
+            boolean isSender = transactionEntity.getSender().equals(user);
+            return new TransactionRelativeAmount(
+                    isSender ? transactionEntity.getReceiver().getUsername() : transactionEntity.getSender().getUsername(),
+                    transactionEntity.getDescription(),
+                    isSender ? - transactionEntity.getAmount() : transactionEntity.getAmount()
+            );
+        }).toList();
     }
 
-    public void addTransaction(TransactionEntity transaction) {
-        transactionRepository.save(transaction);
+    public TransactionEntity createTransaction(TransactionCreateRequest transactionCreateRequest, String currentUserEmail) {
+        UserEntity sender = userService.findByEmail(currentUserEmail);
+        UserEntity receiver = userService.findById(transactionCreateRequest.receiverId());
+        TransactionEntity transaction = new TransactionEntity(sender, receiver, transactionCreateRequest.description(), transactionCreateRequest.amount());
+        return transactionRepository.save(transaction);
     }
 }

@@ -1,5 +1,7 @@
 package com.openclassrooms.paymybuddy.controller;
 
+import com.openclassrooms.paymybuddy.dto.TransactionCreateRequest;
+import com.openclassrooms.paymybuddy.dto.TransactionRelativeAmount;
 import com.openclassrooms.paymybuddy.model.TransactionEntity;
 import com.openclassrooms.paymybuddy.model.UserEntity;
 import com.openclassrooms.paymybuddy.service.TransactionService;
@@ -24,30 +26,19 @@ public class TransactionController {
     @GetMapping("/transfer")
     public String transferPage(Model model, Authentication auth) {
         UserEntity user = userService.findByEmail(auth.getName());
-        List<TransactionEntity> transactions = transactionService.getTransactionsByUser(user);
-        model.addAttribute("transactions", transactions);
+        List<TransactionRelativeAmount> transactionsList = transactionService.getTransactionsWithRelativeAmount(user);
+        model.addAttribute("transactions", transactionsList);
         model.addAttribute("connections", user.getConnections());
         model.addAttribute("active", "transfer");
         return "transfer";
     }
 
     @PostMapping("/transfer")
-    public String transfer(@RequestParam Integer receiverId,
-                         @RequestParam String description,
-                         @RequestParam Double amount,
-                         Model model,
-                         Authentication auth) {
-        UserEntity sender = userService.findByEmail(auth.getName());
-        UserEntity receiver = userService.findById(receiverId);
-        TransactionEntity transaction = new TransactionEntity();
-        transaction.setSender(sender);
-        transaction.setReceiver(receiver);
-        transaction.setDescription(description);
-        transaction.setAmount(amount);
-        List<TransactionEntity> transactions = transactionService.getTransactionsByUser(sender);
-        model.addAttribute("transactions", transactions);
-        model.addAttribute("connections", sender.getConnections());
-        transactionService.addTransaction(transaction);
+    public String transfer(@ModelAttribute TransactionCreateRequest transactionCreateRequest, Model model, Authentication auth) {
+        TransactionEntity transaction = transactionService.createTransaction(transactionCreateRequest, auth.getName());
+        List<TransactionRelativeAmount> transactionsList = transactionService.getTransactionsWithRelativeAmount(transaction.getSender());
+        model.addAttribute("transactions", transactionsList);
+        model.addAttribute("connections", transaction.getSender().getConnections());
         model.addAttribute("active", "transfer");
         return "transfer";
     }

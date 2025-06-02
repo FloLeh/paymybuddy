@@ -12,5 +12,17 @@ public record RegisterUserRequest(
         @Email(message = "L'email n'est pas valide")
         String email,
 
-        @NotBlank String password) {
+        @NotBlank
+        String password) {
+
+        public RegisterUserRequest {
+                if (!validatePassword(password)){
+                        throw new IllegalArgumentException("Password not valid");
+                }
+        }
+
+        private boolean validatePassword(String password) {
+                return password.length() >= 8;
+        }
+
 }

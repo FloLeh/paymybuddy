@@ -28,4 +28,11 @@ public class TransactionEntity {
 
     private Double amount = 0.;
 
+    public TransactionEntity(UserEntity sender, UserEntity receiver, String description, Double amount) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.description = description;
+        this.amount = amount;
+    }
+
 }

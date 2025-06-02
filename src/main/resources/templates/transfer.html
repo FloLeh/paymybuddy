@@ -7,14 +7,14 @@
 <body class="p-10">
     <div th:insert="~{menu}"></div>
 
-    <form th:action="@{/transfer}" method="post">
+    <form th:action="@{/transfer}" th:object="${transactionCreateRequest}" method="post">
         <label class="flex justify-around my-30 gap-10">
             <select class="border-2 border-gray-200 rounded px-5 flex-1" name="receiverId">
                 <option value="">Sélectionner une relation</option>
                 <option th:each="connection : ${connections}" th:value="${connection.id}" th:text="${connection.username}"></option>
             </select>
             <input class="border-2 border-gray-200 rounded px-5 flex-2" type="text" name="description" placeholder="Description" />
-            <input class="border-2 border-gray-200 rounded px-5 w-25 flex-none" type="number" name="amount" placeholder="0" />
+            <input class="border-2 border-gray-200 rounded px-5 w-25 flex-none" type="number" name="amount" min="0" step=".01" placeholder="0.00" />
             <input type="submit" value="Payer" class="bg-blue-500 hover:bg-blue-700 rounded-sm py-3 px-5 text-white text-center cursor-pointer transition-all duration-100 ease-in-out"/>
         </label>
     </form>
@@ -31,9 +31,9 @@
             </thead>
             <tbody>
                 <tr class="border-t-2 border-gray-200 py-5" th:each="transaction : ${transactions}">
-                    <td th:text="${transaction.receiver.username}"></td>
+                    <td th:text="${transaction.relationName}"></td>
                     <td th:text="${transaction.description}"></td>
-                    <td class="text-right" th:text="${transaction.amount} + '€'"></td>
+                    <td class="text-right" th:classappend="${transaction.amount > 0 ? 'text-green-500' : 'text-red-500'}" th:text="${transaction.amount > 0 ? '+' : ''} + ${transaction.amount} + '€'"></td>
                 </tr>
             </tbody>
         </table>

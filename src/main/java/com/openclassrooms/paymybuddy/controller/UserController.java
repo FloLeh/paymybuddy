@@ -1,5 +1,6 @@
 package com.openclassrooms.paymybuddy.controller;
 
+import com.openclassrooms.paymybuddy.exceptions.BusinessException;
 import com.openclassrooms.paymybuddy.model.UserEntity;
 import com.openclassrooms.paymybuddy.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -35,9 +36,12 @@ public class UserController {
 
     @PostMapping("/connections")
     public void connectionsSubmit(@RequestParam String email, Authentication auth, Model model) {
-        String submitStatus = userService.addConnection(auth.getName(), email);
-        model.addAttribute("submitStatus", submitStatus);
-        model.addAttribute("active", "connections");
+        try {
+            userService.addConnection(auth.getName(), email);
+            model.addAttribute("active", "connections");
+            model.addAttribute("errorMessage" , "");
+        } catch (BusinessException e) {
+            model.addAttribute("errorMessage" , e.getMessage());
+        }
     }
-
 }

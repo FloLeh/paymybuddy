@@ -1,5 +1,8 @@
 package com.openclassrooms.paymybuddy.service;
 
+import com.openclassrooms.paymybuddy.exceptions.BusinessException;
+import com.openclassrooms.paymybuddy.exceptions.UserAlreadyConnectedException;
+import com.openclassrooms.paymybuddy.exceptions.UserNotFoundException;
 import com.openclassrooms.paymybuddy.model.UserEntity;
 import com.openclassrooms.paymybuddy.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,30 +40,25 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserEntity findByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow( () -> new RuntimeException("Email not found"));
+        return userRepository.findByEmail(email).orElseThrow( () -> new BusinessException("Email not found"));
     }
 
     public UserEntity findById(Integer id) {
-        return userRepository.findById(id).orElseThrow( () -> new RuntimeException("User not found"));
+        return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
     }
 
-    public String addConnection(String userEmail, String connectionEmail) {
-        UserEntity user = userRepository.findByEmail(userEmail).orElseThrow( () -> new RuntimeException("Email not found"));
+    public void addConnection(String currentUserEmail, String connectionEmail) {
+        UserEntity user = findByEmail(currentUserEmail);
 
-        Optional<UserEntity> connection = userRepository.findByEmail(connectionEmail);
-        if (connection.isEmpty()) {
-            return "notFound";
-        }
+        UserEntity connection = userRepository.findByEmail(connectionEmail).orElseThrow(UserNotFoundException::new);
 
-        if (user.getConnections().contains(connection.get())) {
-            return "alreadyExists";
+        if (user.getConnections().contains(connection) || connectionEmail.equals(currentUserEmail)) {
+            throw new UserAlreadyConnectedException();
         }
 
         Set<UserEntity> connections = user.getConnections();
-        connections.add(connection.get());
+        connections.add(connection);
         user.setConnections(connections);
         userRepository.save(user);
-
-        return "success";
     }
 }
