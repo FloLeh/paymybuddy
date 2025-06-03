@@ -38,17 +38,21 @@ class TransactionServiceTest {
         user = new UserEntity();
         user.setId(1);
         user.setUsername("senderUser");
+        user.setAccount(100.0);
 
         receiver = new UserEntity();
         receiver.setId(2);
         receiver.setUsername("receiverUser");
+        receiver.setAccount(100.0);
     }
 
     @Test
     void getTransactionsWithRelativeAmount_shouldReturnCorrectRelativeAmounts() {
         // given
         TransactionEntity sentTransaction = new TransactionEntity(user, receiver, "Lunch", 50.0);
+        sentTransaction.setId(1);
         TransactionEntity receivedTransaction = new TransactionEntity(receiver, user, "Refund", 20.0);
+        receivedTransaction.setId(2);
 
         when(transactionRepository.findBySender(user)).thenReturn(List.of(sentTransaction));
         when(transactionRepository.findByReceiver(user)).thenReturn(List.of(receivedTransaction));
@@ -83,7 +87,7 @@ class TransactionServiceTest {
         when(transactionRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         // when
-        TransactionEntity result = transactionService.createTransaction(request, currentUserEmail);
+        TransactionEntity result = transactionService.createTransaction(request, user);
 
         // then
         verify(transactionRepository).save(captor.capture());

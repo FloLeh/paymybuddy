@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface TransactionService {
     List<TransactionRelativeAmount> getTransactionsWithRelativeAmount(UserEntity user);
-    TransactionEntity createTransaction(TransactionCreateRequest transactionCreateRequest, String currentUserEmail);
+    TransactionEntity createTransaction(TransactionCreateRequest transactionCreateRequest, UserEntity sender);
 }

@@ -3,6 +3,7 @@ package com.openclassrooms.paymybuddy.controller;
 
 import com.openclassrooms.paymybuddy.dto.TransactionCreateRequest;
 import com.openclassrooms.paymybuddy.dto.TransactionRelativeAmount;
+import com.openclassrooms.paymybuddy.exceptions.NotEnoughToPayException;
 import com.openclassrooms.paymybuddy.model.TransactionEntity;
 import com.openclassrooms.paymybuddy.model.UserEntity;
 import com.openclassrooms.paymybuddy.service.TransactionService;
@@ -46,8 +47,9 @@ public class TransactionControllerTest {
         user = new UserEntity();
         user.setEmail("user@example.com");
         user.setConnections(new HashSet<>());
+        user.setAccount(100.0);
 
-        transactions = List.of(new TransactionRelativeAmount("friend", "desc", 100.0));
+        transactions = List.of(new TransactionRelativeAmount("friend", "desc", -20.0));
     }
 
     @Test
@@ -75,8 +77,8 @@ public class TransactionControllerTest {
         List<TransactionRelativeAmount> updatedTransactions = List.of(
                 new TransactionRelativeAmount("friend", "desc", -50.0)
         );
-
-        when(transactionService.createTransaction(any(TransactionCreateRequest.class), eq("user@example.com")))
+        when(userService.findByEmail("user@example.com")).thenReturn(user);
+        when(transactionService.createTransaction(any(TransactionCreateRequest.class), eq(user)))
                 .thenReturn(transaction);
         when(transactionService.getTransactionsWithRelativeAmount(user))
                 .thenReturn(updatedTransactions);
@@ -91,5 +93,27 @@ public class TransactionControllerTest {
                 .andExpect(model().attribute("active", "transfer"))
                 .andExpect(model().attribute("connections", user.getConnections()))
                 .andExpect(model().attribute("transactions", updatedTransactions));
+    }
+
+    @Test
+    @WithMockUser(username = "user@example.com")
+    void transfer_shouldHandleBusinessException() throws Exception {
+        when(userService.findByEmail("user@example.com")).thenReturn(user);
+        when(transactionService.createTransaction(any(TransactionCreateRequest.class), eq(user)))
+                .thenThrow(new NotEnoughToPayException());
+        when(transactionService.getTransactionsWithRelativeAmount(user))
+                .thenReturn(transactions);
+
+        mockMvc.perform(post("/transfer")
+                        .param("receiverId", "1")
+                        .param("description", "desc")
+                        .param("amount", "50.0")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("transfer"))
+                .andExpect(model().attribute("active", "transfer"))
+                .andExpect(model().attribute("connections", user.getConnections()))
+                .andExpect(model().attribute("transactions", transactions))
+                .andExpect(model().attribute("errorMessage", "Argent insuffisant pour effectuer cette transaction."));
     }
 }

@@ -1,6 +1,7 @@
 package com.openclassrooms.paymybuddy.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,7 +30,8 @@ public class UserEntity {
     private String password;
 
     @Column
-    private Double account;
+    @Positive
+    private Double account = 0.00;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

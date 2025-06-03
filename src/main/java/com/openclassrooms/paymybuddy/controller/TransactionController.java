@@ -2,7 +2,7 @@ package com.openclassrooms.paymybuddy.controller;
 
 import com.openclassrooms.paymybuddy.dto.TransactionCreateRequest;
 import com.openclassrooms.paymybuddy.dto.TransactionRelativeAmount;
-import com.openclassrooms.paymybuddy.model.TransactionEntity;
+import com.openclassrooms.paymybuddy.exceptions.BusinessException;
 import com.openclassrooms.paymybuddy.model.UserEntity;
 import com.openclassrooms.paymybuddy.service.TransactionService;
 import com.openclassrooms.paymybuddy.service.UserService;
@@ -29,17 +29,28 @@ public class TransactionController {
         List<TransactionRelativeAmount> transactionsList = transactionService.getTransactionsWithRelativeAmount(user);
         model.addAttribute("transactions", transactionsList);
         model.addAttribute("connections", user.getConnections());
+        model.addAttribute("account", user.getAccount());
         model.addAttribute("active", "transfer");
         return "transfer";
     }
 
     @PostMapping("/transfer")
     public String transfer(@ModelAttribute TransactionCreateRequest transactionCreateRequest, Model model, Authentication auth) {
-        TransactionEntity transaction = transactionService.createTransaction(transactionCreateRequest, auth.getName());
-        List<TransactionRelativeAmount> transactionsList = transactionService.getTransactionsWithRelativeAmount(transaction.getSender());
-        model.addAttribute("transactions", transactionsList);
-        model.addAttribute("connections", transaction.getSender().getConnections());
         model.addAttribute("active", "transfer");
+        UserEntity user = userService.findByEmail(auth.getName());
+
+        try {
+            transactionService.createTransaction(transactionCreateRequest, user);
+            model.addAttribute("errorMessage" , "");
+        } catch(BusinessException e) {
+            model.addAttribute("errorMessage" , e.getMessage());
+        }
+
+        model.addAttribute("connections", user.getConnections());
+        List<TransactionRelativeAmount> transactionsList = transactionService.getTransactionsWithRelativeAmount(user);
+        model.addAttribute("transactions", transactionsList);
+        model.addAttribute("account", user.getAccount());
+
         return "transfer";
     }
 }

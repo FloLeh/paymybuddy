@@ -2,6 +2,8 @@ package com.openclassrooms.paymybuddy.service;
 
 import com.openclassrooms.paymybuddy.dto.TransactionCreateRequest;
 import com.openclassrooms.paymybuddy.dto.TransactionRelativeAmount;
+import com.openclassrooms.paymybuddy.exceptions.NotEnoughToPayException;
+import com.openclassrooms.paymybuddy.exceptions.UserNotUpdatedException;
 import com.openclassrooms.paymybuddy.model.TransactionEntity;
 import com.openclassrooms.paymybuddy.model.UserEntity;
 import com.openclassrooms.paymybuddy.repository.TransactionRepository;
@@ -36,9 +38,21 @@ public class TransactionServiceImpl implements TransactionService {
         }).toList();
     }
 
-    public TransactionEntity createTransaction(TransactionCreateRequest transactionCreateRequest, String currentUserEmail) {
-        UserEntity sender = userService.findByEmail(currentUserEmail);
+    public TransactionEntity createTransaction(TransactionCreateRequest transactionCreateRequest, UserEntity sender) {
+        if (sender.getAccount() < transactionCreateRequest.amount()) {
+            throw new NotEnoughToPayException();
+        }
+
         UserEntity receiver = userService.findById(transactionCreateRequest.receiverId());
+        try {
+            receiver.setAccount(receiver.getAccount() + transactionCreateRequest.amount());
+            sender.setAccount(sender.getAccount() - transactionCreateRequest.amount());
+            userService.updateUser(sender);
+            userService.updateUser(receiver);
+        } catch (UserNotUpdatedException e) {
+            throw new UserNotUpdatedException();
+        }
+
         TransactionEntity transaction = new TransactionEntity(sender, receiver, transactionCreateRequest.description(), transactionCreateRequest.amount());
         return transactionRepository.save(transaction);
     }

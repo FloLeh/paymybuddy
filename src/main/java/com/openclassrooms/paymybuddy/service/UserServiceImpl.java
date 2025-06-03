@@ -37,6 +37,10 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    public void updateUser(UserEntity user) throws RuntimeException {
+        userRepository.save(user);
+    }
+
     public UserEntity findByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow( () -> new BusinessException("Email not found"));
     }
