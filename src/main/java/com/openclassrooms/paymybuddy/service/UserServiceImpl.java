@@ -1,8 +1,6 @@
 package com.openclassrooms.paymybuddy.service;
 
-import com.openclassrooms.paymybuddy.exceptions.BusinessException;
-import com.openclassrooms.paymybuddy.exceptions.UserAlreadyConnectedException;
-import com.openclassrooms.paymybuddy.exceptions.UserNotFoundException;
+import com.openclassrooms.paymybuddy.exceptions.*;
 import com.openclassrooms.paymybuddy.model.UserEntity;
 import com.openclassrooms.paymybuddy.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +22,12 @@ public class UserServiceImpl implements UserService {
     public void createUser(UserEntity user) throws RuntimeException {
         Optional<UserEntity> existingEmail = userRepository.findByEmail(user.getEmail());
         if (existingEmail.isPresent()) {
-            throw new RuntimeException("Email already exists");
+            throw new EmailAlreadyExists(user.getEmail());
         }
 
         Optional<UserEntity> existingUsername = userRepository.findByUsername(user.getUsername());
         if (existingUsername.isPresent()) {
-            throw new RuntimeException("Username already exists");
+            throw new UsernameAlreadyExists(user.getUsername());
         }
 
         String encodedPassword = passwordEncoder.encode(user.getPassword());

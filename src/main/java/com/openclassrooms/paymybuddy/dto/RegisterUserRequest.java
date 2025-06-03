@@ -3,6 +3,7 @@ package com.openclassrooms.paymybuddy.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public record RegisterUserRequest(
         @NotBlank(message = "Le username ne peut pas être nulle ou vide")
@@ -13,16 +14,6 @@ public record RegisterUserRequest(
         String email,
 
         @NotBlank
+        @Size(min = 8, message = "Le mot de passe doit faire au moins 8 caractères")
         String password) {
-
-        public RegisterUserRequest {
-                if (!validatePassword(password)){
-                        throw new IllegalArgumentException("Password not valid");
-                }
-        }
-
-        private boolean validatePassword(String password) {
-                return password.length() >= 8;
-        }
-
 }

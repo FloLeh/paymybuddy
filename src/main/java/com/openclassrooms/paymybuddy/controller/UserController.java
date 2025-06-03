@@ -35,13 +35,15 @@ public class UserController {
     }
 
     @PostMapping("/connections")
-    public void connectionsSubmit(@RequestParam String email, Authentication auth, Model model) {
+    public String connectionsSubmit(@RequestParam String email, Authentication auth, Model model) {
+        model.addAttribute("active", "connections");
         try {
             userService.addConnection(auth.getName(), email);
-            model.addAttribute("active", "connections");
             model.addAttribute("errorMessage" , "");
         } catch (BusinessException e) {
             model.addAttribute("errorMessage" , e.getMessage());
         }
+
+        return "connections";
     }
 }
