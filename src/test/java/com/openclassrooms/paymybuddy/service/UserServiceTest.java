@@ -3,14 +3,12 @@ package com.openclassrooms.paymybuddy.service;
 import com.openclassrooms.paymybuddy.exceptions.*;
 import com.openclassrooms.paymybuddy.model.UserEntity;
 import com.openclassrooms.paymybuddy.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.HashSet;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,42 +26,54 @@ public class UserServiceTest {
     @InjectMocks
     private UserServiceImpl userService;
 
-    private UserEntity user;
-    private UserEntity connection;
 
-    @BeforeEach
-    void setUp() {
-        user = new UserEntity();
+    private UserEntity newUser(){
+        return new UserEntity("currentUser", "current@example.com", "plaintextPassword");
+    }
+
+    private UserEntity user1(){
+        final UserEntity user = new UserEntity();
         user.setId(1);
         user.setEmail("current@example.com");
         user.setUsername("currentUser");
         user.setPassword("plaintextPassword");
-        user.setConnections(new HashSet<>());
 
-        connection = new UserEntity();
-        connection.setId(2);
-        connection.setEmail("friend@example.com");
-        connection.setUsername("friendUser");
+        return user;
+    }
+
+    private UserEntity user2(){
+        final UserEntity user = new UserEntity();
+        user.setId(2);
+        user.setEmail("friend@example.com");
+        user.setUsername("friendUser");
+        user.setPassword("plaintextPassword");
+        return user;
     }
 
     @Test
     void createUser_shouldCreateUserSuccessfully() {
-        // Given
+        // Given a new user
+        final UserEntity user = newUser();
+
+        final String encodedPassword = "encodedPassword";
+
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.empty());
-        when(passwordEncoder.encode(user.getPassword())).thenReturn("encodedPassword");
+        when(passwordEncoder.encode(user.getPassword())).thenReturn(encodedPassword);
 
         // When
         userService.createUser(user);
 
         // Then
-        assertEquals("encodedPassword", user.getPassword());
+        assertEquals(encodedPassword, user.getPassword());
         verify(userRepository).save(user);
     }
 
     @Test
     void createUser_shouldThrowEmailAlreadyExists_whenEmailExists() {
         // Given
+        final UserEntity user = newUser();
+
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(new UserEntity()));
 
         // When / Then
@@ -74,6 +84,8 @@ public class UserServiceTest {
     @Test
     void createUser_shouldThrowUsernameAlreadyExists_whenUsernameExists() {
         // Given
+        final UserEntity user = newUser();
+
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(new UserEntity()));
 
@@ -87,6 +99,8 @@ public class UserServiceTest {
     @Test
     void findByEmail_shouldReturnUser_whenEmailExists() {
         // Given
+        final UserEntity user = newUser();
+
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
 
         // When
@@ -99,6 +113,7 @@ public class UserServiceTest {
     @Test
     void findByEmail_shouldThrowBusinessException_whenEmailNotFound() {
         // Given
+        final UserEntity user = newUser();
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
 
         // When / Then
@@ -110,6 +125,7 @@ public class UserServiceTest {
     @Test
     void findById_shouldReturnUser_whenIdExists() {
         // Given
+        final UserEntity user = newUser();
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
         // When
@@ -132,12 +148,15 @@ public class UserServiceTest {
 
     @Test
     void addConnection_shouldAddConnectionSuccessfully() {
-        // Given
-        when(userRepository.findByEmail("current@example.com")).thenReturn(Optional.of(user));
-        when(userRepository.findByEmail("friend@example.com")).thenReturn(Optional.of(connection));
+        // Given 2 users
+        final UserEntity user = user1();
+        final UserEntity connection = user2();
+
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(connection.getEmail())).thenReturn(Optional.of(connection));
 
         // When
-        userService.addConnection("current@example.com", "friend@example.com");
+        userService.addConnection(user.getEmail(), connection.getEmail());
 
         // Then
         assertTrue(user.getConnections().contains(connection));
@@ -147,18 +166,25 @@ public class UserServiceTest {
     @Test
     void addConnection_shouldThrowUserNotFoundException_whenConnectionNotFound() {
         // Given
-        when(userRepository.findByEmail("current@example.com")).thenReturn(Optional.of(user));
-        when(userRepository.findByEmail("friend@example.com")).thenReturn(Optional.empty());
+        final UserEntity user = user1();
+
+        final String userNotExistsEmail = "user_not_exists@example.com";
+
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(userNotExistsEmail)).thenReturn(Optional.empty());
 
         // When / Then
         assertThrows(UserNotFoundException.class, () ->
-                userService.addConnection("current@example.com", "friend@example.com"));
+                userService.addConnection(user.getEmail(), userNotExistsEmail));
     }
 
     @Test
     void addConnection_shouldThrowUserAlreadyConnectedException_whenAlreadyConnected() {
         // Given
+        final UserEntity user = user1();
+        final UserEntity connection = user2();
         user.getConnections().add(connection);
+
         when(userRepository.findByEmail("current@example.com")).thenReturn(Optional.of(user));
         when(userRepository.findByEmail("friend@example.com")).thenReturn(Optional.of(connection));
 
@@ -170,7 +196,7 @@ public class UserServiceTest {
     @Test
     void addConnection_shouldThrowUserAlreadyConnectedException_whenSelfConnection() {
         // Given
-        when(userRepository.findByEmail("current@example.com")).thenReturn(Optional.of(user));
+        final UserEntity user = user1();
         when(userRepository.findByEmail("current@example.com")).thenReturn(Optional.of(user));
 
         // When / Then
