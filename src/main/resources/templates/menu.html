@@ -7,7 +7,11 @@
         <li class="ml-10"><a href="/transfer" th:classappend="${active == 'transfer' ? 'text-blue-500 font-bold':''}">Transférer</a></li>
         <li class="ml-10"><a href="/profile" th:classappend="${active == 'profile' ? 'text-blue-500 font-bold':''}">Profil</a></li>
         <li class="ml-10"><a href="/connections" th:classappend="${active == 'connections' ? 'text-blue-500 font-bold':''}">Ajouter relation</a></li>
-        <li class="ml-10"><a href="/logout">Se déconnecter</a></li>
+        <li class="ml-10">
+            <form th:action="@{/logout}" method="post">
+                <input class="cursor-pointer" type="submit" value="Se déconnecter"/>
+            </form>
+        </li>
     </ul>
 </menu>
 </body>

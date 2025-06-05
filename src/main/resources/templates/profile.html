@@ -7,20 +7,22 @@
 <body class="p-10">
     <div th:insert="~{menu}"></div>
 
-    <form class="w-fit mx-auto my-30 flex flex-col leading-[2.5]">
+    <form class="w-fit mx-auto my-30 flex flex-col leading-[2.5]" th:action="@{/profile}" method="post">
         <label>
             <span class="font-medium mr-10">Username</span>
-<!--            <input type="text" th:value="${username}" />-->
+            <input type="text" th:value="${username}" disabled/>
         </label>
         <label>
             <span class="font-medium mr-10">Mail</span>
-            <input type="email" th:value="${email}" />
+            <input type="email" th:value="${email}" disabled />
         </label>
         <label>
             <span class="font-medium mr-10">Mot de passe</span>
-            <input type="password" value="hello" />
+            <input type="password" name="password" value="" placeholder="********" />
             <input type="submit" value="Modifier" class="self-center w-30 bg-amber-500 hover:bg-amber-600 rounded-sm py-3 px-5 text-white text-center leading-[1.5] cursor-pointer transition-all duration-100 ease-in-out"/>
         </label>
+        <p class="text-red-500" th:if="${errorMessage != null && !errorMessage.isEmpty()}" th:text="${errorMessage}"></p>
+        <p class="text-green-500" th:if="${errorMessage != null && errorMessage.isEmpty()}">Le mot de passe a bien été changé.</p>
     </form>
 </body>
 </html>

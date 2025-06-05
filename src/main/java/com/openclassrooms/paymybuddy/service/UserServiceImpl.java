@@ -56,6 +56,15 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    public void updatePassword(UserEntity user, String password) throws RuntimeException {
+        Assert.notNull(password, "password must not be null");
+        Assert.isTrue(StringUtils.hasText(password), "Le mot de passe est vide.");
+        String encodedPassword = passwordEncoder.encode(password);
+
+        user.setPassword(encodedPassword);
+        userRepository.save(user);
+    }
+
     public UserEntity findByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow( () -> new BusinessException("Email not found"));
     }

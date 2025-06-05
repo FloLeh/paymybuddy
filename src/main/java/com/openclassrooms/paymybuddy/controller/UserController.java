@@ -24,7 +24,22 @@ public class UserController {
         model.addAttribute("active", "profile");
         model.addAttribute("email", email);
         model.addAttribute("username", user.getUsername());
-        model.addAttribute("password", user.getPassword());
+        return "profile";
+    }
+
+    @PostMapping("/profile")
+    public String profilePageSubmit(@RequestParam String password, Model model, Authentication auth) {
+        model.addAttribute("active", "profile");
+        String email = auth.getName();
+        UserEntity user = userService.findByEmail(email);
+        try {
+            userService.updatePassword(user, password);
+            model.addAttribute("errorMessage" , "");
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
+        }
+        model.addAttribute("email", email);
+        model.addAttribute("username", user.getUsername());
         return "profile";
     }
 
