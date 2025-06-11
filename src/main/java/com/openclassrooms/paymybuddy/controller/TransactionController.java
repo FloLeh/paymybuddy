@@ -1,7 +1,7 @@
 package com.openclassrooms.paymybuddy.controller;
 
 import com.openclassrooms.paymybuddy.dto.TransactionCreateRequest;
-import com.openclassrooms.paymybuddy.dto.TransactionRelativeAmount;
+import com.openclassrooms.paymybuddy.dto.TransactionRelativeAmountResponse;
 import com.openclassrooms.paymybuddy.exceptions.BusinessException;
 import com.openclassrooms.paymybuddy.model.UserEntity;
 import com.openclassrooms.paymybuddy.service.TransactionService;
@@ -26,7 +26,7 @@ public class TransactionController {
     @GetMapping("/transfer")
     public String transferPage(Model model, Authentication auth) {
         UserEntity user = userService.findByEmail(auth.getName());
-        List<TransactionRelativeAmount> transactionsList = transactionService.getTransactionsWithRelativeAmount(user);
+        List<TransactionRelativeAmountResponse> transactionsList = transactionService.getTransactionsWithRelativeAmount(user);
         model.addAttribute("transactions", transactionsList);
         model.addAttribute("connections", user.getConnections());
         model.addAttribute("account", user.getAccount());
@@ -47,7 +47,7 @@ public class TransactionController {
         }
 
         model.addAttribute("connections", user.getConnections());
-        List<TransactionRelativeAmount> transactionsList = transactionService.getTransactionsWithRelativeAmount(user);
+        List<TransactionRelativeAmountResponse> transactionsList = transactionService.getTransactionsWithRelativeAmount(user);
         model.addAttribute("transactions", transactionsList);
         model.addAttribute("account", user.getAccount());
 

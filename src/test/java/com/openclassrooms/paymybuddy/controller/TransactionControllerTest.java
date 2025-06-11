@@ -2,7 +2,7 @@ package com.openclassrooms.paymybuddy.controller;
 
 
 import com.openclassrooms.paymybuddy.dto.TransactionCreateRequest;
-import com.openclassrooms.paymybuddy.dto.TransactionRelativeAmount;
+import com.openclassrooms.paymybuddy.dto.TransactionRelativeAmountResponse;
 import com.openclassrooms.paymybuddy.exceptions.NotEnoughToPayException;
 import com.openclassrooms.paymybuddy.model.TransactionEntity;
 import com.openclassrooms.paymybuddy.model.UserEntity;
@@ -40,7 +40,7 @@ public class TransactionControllerTest {
     private UserService userService;
 
     private UserEntity user;
-    private List<TransactionRelativeAmount> transactions;
+    private List<TransactionRelativeAmountResponse> transactions;
 
     @BeforeEach
     void setup() {
@@ -49,7 +49,7 @@ public class TransactionControllerTest {
         user.setConnections(new HashSet<>());
         user.setAccount(100.0);
 
-        transactions = List.of(new TransactionRelativeAmount("friend", "desc", -20.0));
+        transactions = List.of(new TransactionRelativeAmountResponse("friend", "desc", -20.0));
     }
 
     @Test
@@ -74,8 +74,8 @@ public class TransactionControllerTest {
         transaction.setAmount(50.0);
         transaction.setDescription("desc");
 
-        List<TransactionRelativeAmount> updatedTransactions = List.of(
-                new TransactionRelativeAmount("friend", "desc", -50.0)
+        List<TransactionRelativeAmountResponse> updatedTransactions = List.of(
+                new TransactionRelativeAmountResponse("friend", "desc", -50.0)
         );
         when(userService.findByEmail("user@example.com")).thenReturn(user);
         when(transactionService.createTransaction(any(TransactionCreateRequest.class), eq(user)))

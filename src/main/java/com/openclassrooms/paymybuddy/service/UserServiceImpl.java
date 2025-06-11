@@ -53,6 +53,7 @@ public class UserServiceImpl implements UserService {
         Assert.isTrue(checkUser.getUsername().equals(user.getUsername()), "username can't be changed");
         Assert.isTrue(checkUser.getEmail().equals(user.getEmail()), "email can't be changed");
         Assert.isTrue(StringUtils.hasText(user.getPassword()), "password must not be empty");
+
         userRepository.save(user);
     }
 

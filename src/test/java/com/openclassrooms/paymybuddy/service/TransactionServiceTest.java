@@ -1,7 +1,7 @@
 package com.openclassrooms.paymybuddy.service;
 
 import com.openclassrooms.paymybuddy.dto.TransactionCreateRequest;
-import com.openclassrooms.paymybuddy.dto.TransactionRelativeAmount;
+import com.openclassrooms.paymybuddy.dto.TransactionRelativeAmountResponse;
 import com.openclassrooms.paymybuddy.model.TransactionEntity;
 import com.openclassrooms.paymybuddy.repository.TransactionRepository;
 import org.mockito.ArgumentCaptor;
@@ -58,17 +58,17 @@ class TransactionServiceTest {
         when(transactionRepository.findByReceiver(user)).thenReturn(List.of(receivedTransaction));
 
         // when
-        List<TransactionRelativeAmount> result = transactionService.getTransactionsWithRelativeAmount(user);
+        List<TransactionRelativeAmountResponse> result = transactionService.getTransactionsWithRelativeAmount(user);
 
         // then
         assertEquals(2, result.size());
 
-        TransactionRelativeAmount first = result.getFirst();
+        TransactionRelativeAmountResponse first = result.getFirst();
         assertEquals("receiverUser", first.relationName());
         assertEquals("Lunch", first.description());
         assertEquals(-50.0, first.amount());
 
-        TransactionRelativeAmount second = result.get(1);
+        TransactionRelativeAmountResponse second = result.get(1);
         assertEquals("receiverUser", second.relationName()); // sender of receivedTransaction
         assertEquals("Refund", second.description());
         assertEquals(20.0, second.amount());
