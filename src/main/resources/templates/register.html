@@ -7,8 +7,9 @@
 <body class="h-screen flex">
 <form th:action="@{/register}" method="post" class="m-auto w-70 border p-10 flex flex-col items-center font-semibold">
     <h1 class="bg-amber-500 rounded-sm py-2 px-3 text-white mb-15">Pay My Buddy</h1>
-    <div th:if="${param.error}" class="text-red-600 bg-red-200 p-2">
-        Email ou Username déjà pris</div>
+    <ul class="text-red-600 bg-red-200 p-2" th:if="${errorMessages}">
+        <li th:each="msg : ${errorMessages}" th:text="${msg}"></li>
+    </ul>
     <div>
         <input type="text" name="username" placeholder="Username" class="border border-gray-300 rounded-sm text-gray-500 p-1 m-4"/>
     </div>

@@ -17,8 +17,10 @@
             <input class="border-2 border-gray-200 rounded px-5 w-25 flex-none" type="number" name="amount" min="0" step=".01" placeholder="0.00" />
             <input type="submit" value="Payer" class="bg-blue-500 hover:bg-blue-700 rounded-sm py-3 px-5 text-white text-center cursor-pointer transition-all duration-100 ease-in-out"/>
         </label>
-        <p class="text-red-500" th:if="${errorMessage != null && !errorMessage.isEmpty()}" th:text="${errorMessage}"></p>
-        <p class="text-green-500" th:if="${errorMessage != null && errorMessage.isEmpty()}">La transaction a bien été effectuée.</p>
+        <ul class="text-red-500" th:if="${errorMessages}">
+            <li th:each="msg : ${errorMessages}" th:text="${msg}"></li>
+        </ul>
+        <p class="text-green-500" th:if="${status != null && !status.isEmpty()}">La transaction a bien été effectuée.</p>
     </form>
 
 

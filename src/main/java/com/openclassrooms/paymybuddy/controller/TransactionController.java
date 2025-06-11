@@ -8,10 +8,13 @@ import com.openclassrooms.paymybuddy.service.TransactionService;
 import com.openclassrooms.paymybuddy.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
 
 import java.util.List;
 
@@ -35,13 +38,19 @@ public class TransactionController {
     }
 
     @PostMapping("/transfer")
-    public String transfer(@ModelAttribute TransactionCreateRequest transactionCreateRequest, Model model, Authentication auth) {
+    public String transfer(@Validated @ModelAttribute TransactionCreateRequest transactionCreateRequest, BindingResult result , Model model, Authentication auth ) {
+
+        if(result.hasErrors()) {
+            var errors = result.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
+            model.addAttribute("errorMessages", errors);
+        }
+
         model.addAttribute("active", "transfer");
         UserEntity user = userService.findByEmail(auth.getName());
 
         try {
             transactionService.createTransaction(transactionCreateRequest, user);
-            model.addAttribute("errorMessage" , "");
+            model.addAttribute("status" , "success");
         } catch(BusinessException e) {
             model.addAttribute("errorMessage" , e.getMessage());
         }

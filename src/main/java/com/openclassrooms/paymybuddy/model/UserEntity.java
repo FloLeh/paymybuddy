@@ -31,7 +31,7 @@ public class UserEntity {
 
     @Column
     @PositiveOrZero
-    private Double account = 0.00;
+    private Double account = 100.00;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
