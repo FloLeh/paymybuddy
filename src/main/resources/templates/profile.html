@@ -21,8 +21,10 @@
             <input type="password" name="password" value="" placeholder="********" />
             <input type="submit" value="Modifier" class="self-center w-30 bg-amber-500 hover:bg-amber-600 rounded-sm py-3 px-5 text-white text-center leading-[1.5] cursor-pointer transition-all duration-100 ease-in-out"/>
         </label>
-        <p class="text-red-500" th:if="${errorMessage != null && !errorMessage.isEmpty()}" th:text="${errorMessage}"></p>
-        <p class="text-green-500" th:if="${errorMessage != null && errorMessage.isEmpty()}">Le mot de passe a bien été changé.</p>
+        <ul class="text-red-500" th:if="${errorMessages}">
+            <li th:each="msg : ${errorMessages}" th:text="${msg}"></li>
+        </ul>
+        <p class="text-green-500" th:if="${status != null}">Le mot de passe a bien été changé.</p>
     </form>
 </body>
 </html>

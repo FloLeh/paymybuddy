@@ -16,6 +16,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 
@@ -47,9 +48,9 @@ public class TransactionControllerTest {
         user = new UserEntity();
         user.setEmail("user@example.com");
         user.setConnections(new HashSet<>());
-        user.setAccount(100.0);
+        user.setAccount(BigDecimal.valueOf(100.0));
 
-        transactions = List.of(new TransactionRelativeAmountResponse("friend", "desc", -20.0));
+        transactions = List.of(new TransactionRelativeAmountResponse("friend", "desc", BigDecimal.valueOf(-20.0)));
     }
 
     @Test
@@ -71,11 +72,11 @@ public class TransactionControllerTest {
     void transfer_shouldCreateTransactionAndShowUpdatedData() throws Exception {
         TransactionEntity transaction = new TransactionEntity();
         transaction.setSender(user);
-        transaction.setAmount(50.0);
+        transaction.setAmount(BigDecimal.valueOf(50.0));
         transaction.setDescription("desc");
 
         List<TransactionRelativeAmountResponse> updatedTransactions = List.of(
-                new TransactionRelativeAmountResponse("friend", "desc", -50.0)
+                new TransactionRelativeAmountResponse("friend", "desc", BigDecimal.valueOf(-50.0))
         );
         when(userService.findByEmail("user@example.com")).thenReturn(user);
         when(transactionService.createTransaction(any(TransactionCreateRequest.class), eq(user)))

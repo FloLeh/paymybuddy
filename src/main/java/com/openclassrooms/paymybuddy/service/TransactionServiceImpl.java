@@ -23,7 +23,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final UserService userService;
 
     public List<TransactionRelativeAmountResponse> getTransactionsWithRelativeAmount(UserEntity user) {
-        return transactionRepository.findAllByReceiverOrReceiver(user)
+        return transactionRepository.findAllBySenderOrReceiver(user)
                 .stream()
                 .map(transactionEntity ->  new TransactionRelativeAmountResponse(transactionEntity, user))
                 .toList();

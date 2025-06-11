@@ -13,7 +13,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 
+import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -40,7 +42,7 @@ public class UserControllerTest {
         user.setUsername("TestUser");
         user.setEmail("user@example.com");
         user.setConnections(new HashSet<>());
-        user.setAccount(100.0);
+        user.setAccount(BigDecimal.valueOf(100.0));
     }
 
     @Test
@@ -68,8 +70,7 @@ public class UserControllerTest {
                 .andExpect(view().name("profile"))
                 .andExpect(model().attribute("active", "profile"))
                 .andExpect(model().attribute("email", user.getEmail()))
-                .andExpect(model().attribute("username", user.getUsername()))
-                .andExpect(model().attribute("errorMessage", ""));
+                .andExpect(model().attribute("username", user.getUsername()));
 
         verify(userService).updatePassword(user, "newStrongPassword");
     }
@@ -88,7 +89,7 @@ public class UserControllerTest {
                 .andExpect(model().attribute("active", "profile"))
                 .andExpect(model().attribute("email", user.getEmail()))
                 .andExpect(model().attribute("username", user.getUsername()))
-                .andExpect(model().attribute("errorMessage", "Mot de passe invalide"));
+                .andExpect(model().attribute("errorMessages", List.of("Le mot de passe doit faire au moins 8 caractères.")));
     }
 
     @Test

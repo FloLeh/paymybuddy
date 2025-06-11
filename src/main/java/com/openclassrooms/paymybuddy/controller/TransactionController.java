@@ -38,13 +38,13 @@ public class TransactionController {
 
     @PostMapping("/transfer")
     public String transfer(@Validated @ModelAttribute TransactionCreateRequest transactionCreateRequest, BindingResult result , Model model, Authentication auth ) {
+        model.addAttribute("active", "transfer");
 
         if(result.hasErrors()) {
             var errors = result.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
             model.addAttribute("errorMessages", errors);
         }
 
-        model.addAttribute("active", "transfer");
         UserEntity user = userService.findByEmail(auth.getName());
 
         try {

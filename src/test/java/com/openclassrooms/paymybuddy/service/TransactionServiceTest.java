@@ -55,8 +55,7 @@ class TransactionServiceTest {
         TransactionEntity receivedTransaction = new TransactionEntity(receiver, user, "Refund", BigDecimal.valueOf(20.0));
         receivedTransaction.setId(2);
 
-        when(transactionRepository.findBySender(user)).thenReturn(List.of(sentTransaction));
-        when(transactionRepository.findByReceiver(user)).thenReturn(List.of(receivedTransaction));
+        when(transactionRepository.findAllBySenderOrReceiver(user)).thenReturn(List.of(sentTransaction, receivedTransaction));
 
         // when
         List<TransactionRelativeAmountResponse> result = transactionService.getTransactionsWithRelativeAmount(user);
@@ -64,14 +63,12 @@ class TransactionServiceTest {
         // then
         assertEquals(2, result.size());
 
-        TransactionRelativeAmountResponse first = result.getFirst();
+        TransactionRelativeAmountResponse first = result.stream().filter(r -> r.description().equals("Lunch")).findFirst().orElseThrow();
         assertEquals("receiverUser", first.relationName());
-        assertEquals("Lunch", first.description());
         assertEquals(BigDecimal.valueOf(-50.0), first.amount());
 
-        TransactionRelativeAmountResponse second = result.get(1);
-        assertEquals("receiverUser", second.relationName()); // sender of receivedTransaction
-        assertEquals("Refund", second.description());
+        TransactionRelativeAmountResponse second = result.stream().filter(r -> r.description().equals("Refund")).findFirst().orElseThrow();
+        assertEquals("receiverUser", second.relationName()); // relation is still the other user
         assertEquals(BigDecimal.valueOf(20.0), second.amount());
     }
 

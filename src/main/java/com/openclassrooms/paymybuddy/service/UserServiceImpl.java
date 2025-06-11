@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public void updatePassword(UserEntity user, String password) throws RuntimeException {
-        Assert.notNull(password, "password must not be null");
+        Assert.notNull(password, "Le mot de passe est null.");
         Assert.isTrue(StringUtils.hasText(password), "Le mot de passe est vide.");
         String encodedPassword = passwordEncoder.encode(password);
 

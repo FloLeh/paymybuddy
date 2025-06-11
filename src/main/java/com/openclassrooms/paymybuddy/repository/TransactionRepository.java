@@ -11,10 +11,6 @@ import java.util.List;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<TransactionEntity, Integer> {
-    List<TransactionEntity> findBySender(UserEntity sender);
-
-    List<TransactionEntity> findByReceiver(UserEntity receiver);
-
     @Query("Select t from TransactionEntity t where t.sender = :user or t.receiver = :user order by t.id desc")
-    List<TransactionEntity> findAllByReceiverOrReceiver(@Param("user") UserEntity user);
+    List<TransactionEntity> findAllBySenderOrReceiver(@Param("user") UserEntity user);
 }

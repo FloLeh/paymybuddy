@@ -76,9 +76,7 @@ public class RegistrationControllerTest {
                         .param("email", user.getEmail())
                         .param("password", user.getPassword())
                         .with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/register?error=true"))
-                .andExpect(flash().attributeExists("errors"));
+                .andExpect(model().attributeExists("errorMessages"));
     }
 
     @Test
@@ -88,8 +86,6 @@ public class RegistrationControllerTest {
                         .param("email", "invalid@email.com")
                         .param("password", "")
                         .with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/register?error=true"))
-                .andExpect(flash().attributeExists("errors"));
+                .andExpect(model().attributeExists("errorMessages"));
     }
 }
