@@ -2,7 +2,6 @@ package com.openclassrooms.paymybuddy.controller;
 
 import com.openclassrooms.paymybuddy.dto.TransactionCreateRequest;
 import com.openclassrooms.paymybuddy.dto.TransactionRelativeAmountResponse;
-import com.openclassrooms.paymybuddy.exceptions.BusinessException;
 import com.openclassrooms.paymybuddy.model.UserEntity;
 import com.openclassrooms.paymybuddy.service.TransactionService;
 import com.openclassrooms.paymybuddy.service.UserService;
@@ -51,7 +50,8 @@ public class TransactionController {
         try {
             transactionService.createTransaction(transactionCreateRequest, user);
             model.addAttribute("status" , "success");
-        } catch(BusinessException e) {
+        } catch(Exception e) {
+            log.error(String.valueOf(e));
             model.addAttribute("errorMessage" , e.getMessage());
         }
 

@@ -9,7 +9,9 @@ import com.openclassrooms.paymybuddy.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Slf4j
@@ -28,18 +30,25 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     public TransactionEntity createTransaction(TransactionCreateRequest transactionCreateRequest, UserEntity sender) {
-        if (sender.getAccount() - transactionCreateRequest.amount() < 0 ) {
+        Assert.isTrue(transactionCreateRequest.amount().compareTo(BigDecimal.valueOf(0)) != 0, "Le montant ne peut être 0.");
+        Assert.notNull(transactionCreateRequest.receiverId(), "Pas de relation sélectionnée.");
+
+        BigDecimal amount = transactionCreateRequest.amount();
+        BigDecimal senderAccount = sender.getAccount();
+
+        if (senderAccount.compareTo(amount) < 0 ) {
             throw new NotEnoughToPayException();
         }
 
         UserEntity receiver = userService.findById(transactionCreateRequest.receiverId());
 
-        receiver.setAccount(receiver.getAccount() + transactionCreateRequest.amount());
-        sender.setAccount(sender.getAccount() - transactionCreateRequest.amount());
+        sender.setAccount(senderAccount.subtract(amount));
+        receiver.setAccount(receiver.getAccount().add(amount));
+
         userService.updateUser(sender);
         userService.updateUser(receiver);
 
-        TransactionEntity transaction = new TransactionEntity(sender, receiver, transactionCreateRequest.description(), transactionCreateRequest.amount());
+        TransactionEntity transaction = new TransactionEntity(sender, receiver, transactionCreateRequest.description(), amount);
         return transactionRepository.save(transaction);
     }
 }

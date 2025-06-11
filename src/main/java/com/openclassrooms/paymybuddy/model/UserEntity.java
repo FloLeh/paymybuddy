@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,9 +30,9 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
-    @Column
+    @Column(scale = 2)
     @PositiveOrZero
-    private Double account = 100.00;
+    private BigDecimal account = BigDecimal.valueOf(100);
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

@@ -14,7 +14,7 @@
                 <option th:each="connection : ${connections}" th:value="${connection.id}" th:text="${connection.username}"></option>
             </select>
             <input class="border-2 border-gray-200 rounded px-5 flex-2" type="text" name="description" placeholder="Description" />
-            <input class="border-2 border-gray-200 rounded px-5 w-25 flex-none" type="number" name="amount" min="0" step=".01" placeholder="0.00" />
+            <input class="border-2 border-gray-200 rounded px-5 w-25 flex-none" type="number" value="0.00" name="amount" min="0" step=".01" />
             <input type="submit" value="Payer" class="bg-blue-500 hover:bg-blue-700 rounded-sm py-3 px-5 text-white text-center cursor-pointer transition-all duration-100 ease-in-out"/>
         </label>
         <ul class="text-red-500" th:if="${errorMessages}">

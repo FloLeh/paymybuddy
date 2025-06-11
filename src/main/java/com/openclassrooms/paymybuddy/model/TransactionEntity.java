@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @Entity
 @NoArgsConstructor
@@ -26,9 +28,9 @@ public class TransactionEntity {
 
     private String description;
 
-    private Double amount = 0.;
+    private BigDecimal amount = BigDecimal.valueOf(0.);
 
-    public TransactionEntity(UserEntity sender, UserEntity receiver, String description, Double amount) {
+    public TransactionEntity(UserEntity sender, UserEntity receiver, String description, BigDecimal amount) {
         this.sender = sender;
         this.receiver = receiver;
         this.description = description;

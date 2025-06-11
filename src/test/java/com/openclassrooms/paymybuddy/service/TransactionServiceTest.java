@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,20 +39,20 @@ class TransactionServiceTest {
         user = new UserEntity();
         user.setId(1);
         user.setUsername("senderUser");
-        user.setAccount(100.0);
+        user.setAccount(BigDecimal.valueOf(100.0));
 
         receiver = new UserEntity();
         receiver.setId(2);
         receiver.setUsername("receiverUser");
-        receiver.setAccount(100.0);
+        receiver.setAccount(BigDecimal.valueOf(100.0));
     }
 
     @Test
     void getTransactionsWithRelativeAmount_shouldReturnCorrectRelativeAmounts() {
         // given
-        TransactionEntity sentTransaction = new TransactionEntity(user, receiver, "Lunch", 50.0);
+        TransactionEntity sentTransaction = new TransactionEntity(user, receiver, "Lunch", BigDecimal.valueOf(50.0));
         sentTransaction.setId(1);
-        TransactionEntity receivedTransaction = new TransactionEntity(receiver, user, "Refund", 20.0);
+        TransactionEntity receivedTransaction = new TransactionEntity(receiver, user, "Refund", BigDecimal.valueOf(20.0));
         receivedTransaction.setId(2);
 
         when(transactionRepository.findBySender(user)).thenReturn(List.of(sentTransaction));
@@ -66,18 +67,18 @@ class TransactionServiceTest {
         TransactionRelativeAmountResponse first = result.getFirst();
         assertEquals("receiverUser", first.relationName());
         assertEquals("Lunch", first.description());
-        assertEquals(-50.0, first.amount());
+        assertEquals(BigDecimal.valueOf(-50.0), first.amount());
 
         TransactionRelativeAmountResponse second = result.get(1);
         assertEquals("receiverUser", second.relationName()); // sender of receivedTransaction
         assertEquals("Refund", second.description());
-        assertEquals(20.0, second.amount());
+        assertEquals(BigDecimal.valueOf(20.0), second.amount());
     }
 
     @Test
     void createTransaction_shouldCreateAndSaveTransaction() {
         // given
-        TransactionCreateRequest request = new TransactionCreateRequest(2, "Dinner", 75.0);
+        TransactionCreateRequest request = new TransactionCreateRequest(2, "Dinner", BigDecimal.valueOf(75.0));
         String currentUserEmail = "sender@example.com";
 
         when(userService.findByEmail(currentUserEmail)).thenReturn(user);
@@ -96,7 +97,7 @@ class TransactionServiceTest {
         assertEquals(user, savedTransaction.getSender());
         assertEquals(receiver, savedTransaction.getReceiver());
         assertEquals("Dinner", savedTransaction.getDescription());
-        assertEquals(75.0, savedTransaction.getAmount());
+        assertEquals(BigDecimal.valueOf(75.0), savedTransaction.getAmount());
 
         assertEquals(savedTransaction, result);
     }
