@@ -75,11 +75,12 @@ public class UserServiceImpl implements UserService {
     }
 
     public void addConnection(String currentUserEmail, String connectionEmail) {
+        Assert.isTrue(!connectionEmail.equals(currentUserEmail), "L'utilisateur ne peut pas être vous même.");
         UserEntity user = findByEmail(currentUserEmail);
 
         UserEntity connection = userRepository.findByEmail(connectionEmail).orElseThrow(UserNotFoundException::new);
 
-        if (user.getConnections().contains(connection) || connectionEmail.equals(currentUserEmail)) {
+        if (user.getConnections().contains(connection)) {
             throw new UserAlreadyConnectedException();
         }
 

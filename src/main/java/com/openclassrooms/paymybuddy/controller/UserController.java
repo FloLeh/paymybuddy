@@ -1,7 +1,6 @@
 package com.openclassrooms.paymybuddy.controller;
 
 import com.openclassrooms.paymybuddy.dto.UpdatePasswordRequest;
-import com.openclassrooms.paymybuddy.exceptions.BusinessException;
 import com.openclassrooms.paymybuddy.model.UserEntity;
 import com.openclassrooms.paymybuddy.service.UserService;
 import jakarta.validation.Valid;
@@ -68,7 +67,7 @@ public class UserController {
         try {
             userService.addConnection(auth.getName(), email);
             model.addAttribute("errorMessage" , "");
-        } catch (BusinessException e) {
+        } catch (Exception e) {
             model.addAttribute("errorMessage" , e.getMessage());
         }
 

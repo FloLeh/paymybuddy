@@ -52,7 +52,7 @@ public class TransactionController {
             model.addAttribute("status" , "success");
         } catch(Exception e) {
             log.error(String.valueOf(e));
-            model.addAttribute("errorMessage" , e.getMessage());
+            model.addAttribute("errorMessages" , e.getMessage());
         }
 
         model.addAttribute("connections", user.getConnections());
