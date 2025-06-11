@@ -41,7 +41,7 @@ public class TransactionController {
         model.addAttribute("active", "transfer");
 
         if(result.hasErrors()) {
-            var errors = result.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
+            List<String> errors = result.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList();
             model.addAttribute("errorMessages", errors);
         }
 
