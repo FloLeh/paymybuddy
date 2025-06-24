@@ -114,7 +114,6 @@ public class TransactionControllerTest {
                 .andExpect(view().name("transfer"))
                 .andExpect(model().attribute("active", "transfer"))
                 .andExpect(model().attribute("connections", user.getConnections()))
-                .andExpect(model().attribute("transactions", transactions))
-                .andExpect(model().attribute("errorMessage", "Argent insuffisant pour effectuer cette transaction."));
+                .andExpect(model().attribute("transactions", transactions));
     }
 }

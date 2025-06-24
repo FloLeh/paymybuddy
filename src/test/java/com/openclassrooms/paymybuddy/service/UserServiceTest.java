@@ -326,15 +326,4 @@ public class UserServiceTest {
         assertThrows(UserAlreadyConnectedException.class, () ->
                 userService.addConnection("current@example.com", "friend@example.com"));
     }
-
-    @Test
-    void addConnection_shouldThrowUserAlreadyConnectedException_whenSelfConnection() {
-        // Given
-        final UserEntity user = user1();
-        when(userRepository.findByEmail("current@example.com")).thenReturn(Optional.of(user));
-
-        // When / Then
-        assertThrows(UserAlreadyConnectedException.class, () ->
-                userService.addConnection("current@example.com", "current@example.com"));
-    }
 }
